@@ -1,4 +1,4 @@
-FROM ubuntu:xenial
+FROM ubuntu:bionic
 
 # Install ROS 2 dependencies
 RUN export DEBIAN_FRONTEND=noninteractive && \
@@ -51,15 +51,14 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Install Gradle
-# Xenial only: Use a PPA to get version >= 3.2
-RUN add-apt-repository ppa:cwchien/gradle && \
-    apt update -qq && \
+RUN apt update -qq && \
     apt install -y gradle && \
     apt clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Colcon gradle support
 RUN python3 -m pip install -U git+https://github.com/colcon/colcon-gradle
+RUN python3 -m pip install --no-deps -U git+https://github.com/colcon/colcon-ros-gradle
 
 # Install Java (or just rely on rosdep key 'java'?)
 RUN apt update -qq && \
@@ -77,17 +76,17 @@ RUN apt update -qq && \
 # Fetch code and install dependencies with rosdep
 RUN mkdir -p ~/ros2_java_ws/src && \
     cd ~/ros2_java_ws && \
-    curl -skL https://raw.githubusercontent.com/ros2/ros2/bouncy/ros2.repos -o bouncy.repos && \
-    curl -skL https://gist.githubusercontent.com/jacobperron/c21b5fd9a9661e5d03cb444d0565254b/raw/62cecdbab806f61008d3f5dac81ad6532fae13a0/overlay.repos -o rcljava_overlay.repos && \
-    vcs import src < bouncy.repos && \
-    vcs import src < rcljava_overlay.repos && \
+    curl -skL https://raw.githubusercontent.com/ros2/ros2/dashing/ros2.repos -o ros2.repos && \
+    curl -skL https://gist.githubusercontent.com/jacobperron/c21b5fd9a9661e5d03cb444d0565254b/raw/73a85f523610e5de8bda1b366d4d5b399701a34d/rcljava.repos -o rcljava.repos && \
+    vcs import src < ros2.repos && \
+    vcs import src < rcljava.repos && \
     apt update -qq && \
     rosdep init && \
     rosdep update && \
-    rosdep install --from-paths src --ignore-src --rosdistro bouncy -y --skip-keys "console_bridge fastcdr fastrtps libopensplice67 libopensplice69 rti-connext-dds-5.3.1 urdfdom_headers rosidl_typesupport_java" && \
+    rosdep install --from-paths src --ignore-src -r --rosdistro dashing -y --skip-keys "console_bridge fastcdr fastrtps libopensplice67 libopensplice69 rti-connext-dds-5.3.1 urdfdom_headers rosidl_typesupport_java" && \
     apt clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Build (rcljava and examples)
-RUN cd ~/ros2_java_ws && \
-    colcon build --symlink-install --packages-up-to rcljava rcljava_examples
+# RUN cd ~/ros2_java_ws && \
+#     colcon build --packages-up-to rcljava rcljava_examples
