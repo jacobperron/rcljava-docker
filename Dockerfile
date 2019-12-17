@@ -76,14 +76,14 @@ RUN apt update -qq && \
 # Fetch code and install dependencies with rosdep
 RUN mkdir -p ~/ros2_java_ws/src && \
     cd ~/ros2_java_ws && \
-    curl -skL https://raw.githubusercontent.com/ros2/ros2/dashing/ros2.repos -o ros2.repos && \
+    curl -skL https://raw.githubusercontent.com/ros2/ros2/eloquent/ros2.repos -o ros2.repos && \
     curl -skL https://gist.githubusercontent.com/jacobperron/c21b5fd9a9661e5d03cb444d0565254b/raw/73a85f523610e5de8bda1b366d4d5b399701a34d/rcljava.repos -o rcljava.repos && \
     vcs import src < ros2.repos && \
     vcs import src < rcljava.repos && \
     apt update -qq && \
     rosdep init && \
     rosdep update && \
-    rosdep install --from-paths src --ignore-src -r --rosdistro dashing -y --skip-keys "console_bridge fastcdr fastrtps libopensplice67 libopensplice69 rti-connext-dds-5.3.1 urdfdom_headers rosidl_typesupport_java" && \
+    rosdep install --from-paths src --ignore-src -r --rosdistro eloquent -y --skip-keys "console_bridge fastcdr fastrtps libopensplice67 libopensplice69 rti-connext-dds-5.3.1 urdfdom_headers rosidl_typesupport_java" && \
     apt clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
