@@ -77,7 +77,7 @@ RUN apt update -qq && \
 RUN mkdir -p ~/ros2_java_ws/src && \
     cd ~/ros2_java_ws && \
     curl -skL https://raw.githubusercontent.com/ros2/ros2/eloquent/ros2.repos -o ros2.repos && \
-    curl -skL https://gist.githubusercontent.com/jacobperron/c21b5fd9a9661e5d03cb444d0565254b/raw/bbd0b600ad1c15a9c0883fa39d18df37e90d5e92/rcljava.repos -o rcljava.repos && \
+    curl -skL  https://gist.githubusercontent.com/jacobperron/c21b5fd9a9661e5d03cb444d0565254b/raw/437c698d0827a6a66b5f4f45c4d57d7edb9d350c/rcljava.repos -o rcljava.repos && \
     vcs import src < ros2.repos && \
     vcs import src < rcljava.repos && \
     apt update -qq && \
