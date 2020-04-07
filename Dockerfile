@@ -1,4 +1,4 @@
-FROM ubuntu:bionic
+FROM ros:dashing
 
 # Install ROS 2 dependencies
 RUN export DEBIAN_FRONTEND=noninteractive && \
@@ -9,9 +9,6 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
       locales \
       lsb-release \
       software-properties-common && \
-    curl http://repo.ros2.org/repos.key | apt-key add - && \
-    sh -c 'echo "deb [arch=amd64,arm64] http://packages.ros.org/ros2/ubuntu `lsb_release -cs` main" > /etc/apt/sources.list.d/ros2-latest.list' && \
-    apt update -qq && \
     locale-gen en_US en_US.UTF-8 && \
     update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8 && \
     export LANG=en_US.UTF-8 && \
@@ -76,17 +73,15 @@ RUN apt update -qq && \
 # Fetch code and install dependencies with rosdep
 RUN mkdir -p ~/ros2_java_ws/src && \
     cd ~/ros2_java_ws && \
-    curl -skL https://raw.githubusercontent.com/ros2/ros2/dashing/ros2.repos -o ros2.repos && \
-    curl -skL https://gist.githubusercontent.com/jacobperron/c21b5fd9a9661e5d03cb444d0565254b/raw/73a85f523610e5de8bda1b366d4d5b399701a34d/rcljava.repos -o rcljava.repos && \
-    vcs import src < ros2.repos && \
+    curl -skL https://gist.githubusercontent.com/jacobperron/c21b5fd9a9661e5d03cb444d0565254b/raw/05534d7c7a3c272e15e977001f1b8f35f15d12ad/rcljava_dashing.repos -o rcljava.repos && \
     vcs import src < rcljava.repos && \
     apt update -qq && \
-    rosdep init && \
     rosdep update && \
-    rosdep install --from-paths src --ignore-src -r --rosdistro dashing -y --skip-keys "console_bridge fastcdr fastrtps libopensplice67 libopensplice69 rti-connext-dds-5.3.1 urdfdom_headers rosidl_typesupport_java" && \
+    RTI_NC_LICENSE_ACCEPTED=yes rosdep install --from-paths src --ignore-src -r --rosdistro dashing -y --skip-keys "console_bridge fastcdr fastrtps libopensplice67 libopensplice69 urdfdom_headers rosidl_typesupport_java" && \
     apt clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Build (rcljava and examples)
-# RUN cd ~/ros2_java_ws && \
-#     colcon build --packages-up-to rcljava rcljava_examples
+RUN cd ~/ros2_java_ws && \
+    . /opt/ros/dashing/setup.sh && \
+    colcon build --packages-up-to rcljava rcljava_examples
