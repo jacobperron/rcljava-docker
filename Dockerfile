@@ -67,7 +67,7 @@ RUN apt update -qq && \
 # Fetch code and install dependencies with rosdep
 RUN mkdir -p ~/ros2_java_ws/src && \
     cd ~/ros2_java_ws && \
-    curl -skL https://gist.githubusercontent.com/jacobperron/c21b5fd9a9661e5d03cb444d0565254b/raw/11c33c83da81561a8d40e4ed2207ec3d5271c526/rcljava_foxy.repos -o rcljava.repos && \
+    curl -skL https://gist.githubusercontent.com/jacobperron/c21b5fd9a9661e5d03cb444d0565254b/raw/11c33c83da81561a8d40e4ed2207ec3d5271c526/rcljava_latest.repos -o rcljava.repos && \
     vcs import src < rcljava.repos && \
     apt update -qq && \
     rosdep update && \
