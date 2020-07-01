@@ -1,49 +1,15 @@
 FROM ros:dashing
 
-# Install ROS 2 dependencies
+# Install build dependencies
 RUN export DEBIAN_FRONTEND=noninteractive && \
     apt update -qq && \
     apt install -y \
       curl \
-      gnupg2 \
-      locales \
-      lsb-release \
-      software-properties-common && \
-    locale-gen en_US en_US.UTF-8 && \
-    update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8 && \
-    export LANG=en_US.UTF-8 && \
-    apt install -y \
-      build-essential \
-      cmake \
       git \
       python3-colcon-common-extensions \
-      python3-lark-parser \
-      python3-lxml \
-      python3-numpy \
       python3-pip \
       python-rosdep \
-      python3-vcstool \
-      wget && \
-    python3 -m pip install -U \
-      argcomplete \
-      flake8 \
-      flake8-blind-except \
-      flake8-builtins \
-      flake8-class-newline \
-      flake8-comprehensions \
-      flake8-deprecated \
-      flake8-docstrings \
-      flake8-import-order \
-      flake8-quotes \
-      pytest-repeat \
-      pytest-rerunfailures \
-      pytest \
-      pytest-cov \
-      pytest-runner \
-      setuptools && \
-    apt install --no-install-recommends -y \
-      libasio-dev \
-      libtinyxml2-dev && \
+      python3-vcstool && \
     apt clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
@@ -73,11 +39,11 @@ RUN apt update -qq && \
 # Fetch code and install dependencies with rosdep
 RUN mkdir -p ~/ros2_java_ws/src && \
     cd ~/ros2_java_ws && \
-    curl -skL https://gist.githubusercontent.com/jacobperron/c21b5fd9a9661e5d03cb444d0565254b/raw/05534d7c7a3c272e15e977001f1b8f35f15d12ad/rcljava_dashing.repos -o rcljava.repos && \
+    curl -skL https://raw.githubusercontent.com/ros2-java/ros2_java/dashing/ros2_java_desktop.repos -o rcljava.repos && \
     vcs import src < rcljava.repos && \
     apt update -qq && \
     rosdep update && \
-    RTI_NC_LICENSE_ACCEPTED=yes rosdep install --from-paths src --ignore-src -r --rosdistro dashing -y --skip-keys "console_bridge fastcdr fastrtps libopensplice67 libopensplice69 urdfdom_headers rosidl_typesupport_java" && \
+    RTI_NC_LICENSE_ACCEPTED=yes rosdep install --from-paths src --ignore-src --rosdistro dashing -y --skip-keys "ament_tools" && \
     apt clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
